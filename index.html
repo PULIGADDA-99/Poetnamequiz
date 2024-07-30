@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>తెలుగు రచయితలు క్విజ్</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .hidden { display: none; }
+        #start-screen, #game-screen, #review-screen, #info-screen { text-align: center; padding: 20px; }
+        .animation { font-size: 2em; color: #fff; background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .heading { font-size: 1.5em; margin: 20px 0; }
+        .play-button { padding: 10px 20px; font-size: 1.2em; cursor: pointer; }
+        .question-container { margin: 20px; }
+        .options { list-style: none; padding: 0; }
+        .option { margin: 10px 0; padding: 10px; border: 1px solid #ddd; cursor: pointer; }
+        .option.selected { background-color: #d1e7dd; border-color: #badbcc; }
+        .btn { padding: 10px 20px; font-size: 1em; cursor: pointer; }
+        .btn-green { background-color: #4CAF50; color: white; }
+        .btn-blue { background-color: #008CBA; color: white; }
+        .btn-red { background-color: #f44336; color: white; }
+        .btn-yellow { background-color: #ffeb3b; color: black; }
+        .info { margin: 20px; }
+    </style>
+</head>
+<body>
+    <div id="start-screen">
+        <div id="namaskaram" class="animation">నమస్కారం</div>
+        <div id="game-instructions" class="hidden">
+            <h1 class="heading">తెలుగు రచయితలు క్విజ్ కి స్వాగతం</h1>
+            <button id="play-now" class="play-button btn btn-green">ఇప్పుడు ఆడండి</button>
+        </div>
+    </div>
+    
+    <div id="game-screen" class="hidden">
+        <h2>ప్రశ్నలు</h2>
+        <div id="question-container" class="question-container"></div>
+        <button id="prev" class="btn btn-blue hidden">మునుపటి</button>
+        <button id="next" class="btn btn-blue">తరువాత</button>
+        <button id="submit" class="btn btn-red hidden">సబ్మిట్</button>
+    </div>
+
+    <div id="review-screen" class="hidden">
+        <h2>మీ స్కోరు</h2>
+        <div id="score"></div>
+ <div class="thank-you" class="thank-you hidden">ధన్యవాదములు</div>
+        <div class="developed-by">Developed by the students of DMSSVH College of Engineering Machilipatnam</div>
+        <button id="more-info" class="btn btn-yellow">మరింత సమాచారం</button>
+        <button id="play-again" class="btn btn-green">మళ్లీ ఆడండి</button>
+        <button id="useful-links" class="btn btn-blue">ఉపయోగకరమైన లింకులు</button>
+    </div>
+
+    <div id="info-screen" class="hidden">
+        <h2>పరిచయాలు</h2>
+        <div id="info-details" class="info"></div>
+        <button id="back-to-review" class="btn btn-blue">సమీక్షకు తిరిగి వెళ్లండి</button>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "పాంచతంత్రం రచయిత ఎవరు?", options: ["విష్ణు శర్మ", "కాళిదాస", "వేదవ్యాస", "భాసా"], answer: 0, info: "విష్ణు శర్మ రచించిన పాంచతంత్రం కథల సంకలనం." },
+            { question: "పురాతన భారతీయ స్కాలర్ చారకకు ఏ గ్రంథం చెందుతుంది?", options: ["సుశ్రుతసంహితా", "చారకసంహితా", "అష్టాంగా హృదయం", "రసరత్న సముచ్ఛయా"], answer: 1, info: "చారకసంహితా అనేది చారక రాసిన ఔషధ గ్రంథం." },
+            { question: "కుమారసంభవం అనే కవితను ఏ ప్రాచీన భారతీయ కవి రచించాడు?", options: ["భాసా", "కాళిదాస", "భవభూషణ", "సుద్రక"], answer: 1, info: "కాళిదాస రచించిన కుమారసంభవం మహాకావ్యం." },
+            { question: "ప్రసిద్ధ రచన మృచ్చకటికా ని ఎవరు రాశారు?", options: ["సుద్రక", "కాళిదాస", "భాసా", "విశాఖదత్త"], answer: 0, info: "సుద్రక రచించిన మృచ్చకటికా నాటకం." },
+            { question: "రాజతరంగిని అనే గ్రంథం ఏ కశ్మీరీ చరిత్రకారుడు రచించాడు?", options: ["కల్పన", "బానా", "తులసీదాస్", "బానభట్ట"], answer: 3, info: "బానభట్ట రాసిన రాజతరంగిని కశ్మీరీ చరిత్ర గ్రంథం." },
+            { question: "న్యాయ సూత్రాలు అనే గ్రంథం ఎవరు రచించారు?", options: ["గౌతమ", "జైమిని", "కపిల", "పటంజలి"], answer: 0, info: "గౌతమ రాసిన న్యాయసూత్రాలు శాస్త్రం." },
+            { question: "జైమిని సూత్రాలు అనే పురాతన గ్రంథాన్ని ఎవరు రచించారు?", options: ["జైమిని", "పటంజలి", "వ్యాస", "భారత"], answer: 0, info: "జైమిని రచించిన జైమిని సూత్రాలు ఉపనిషత్తులపై." },
+            { question: "ఆర్థశాస్త్రం అనే పురాతన గ్రంథం ఎవరు రచించారు?", options: ["చాణక్య", "భారత ముని", "పటంజలి", "కాళిదాస"], answer: 0, info: "చాణక్య రాసిన ఆర్థశాస్త్రం బిజినెస్ మరియు పాలనపై." },
+            { question: "అభిజ్ఞానశకుంతలమ్ అనే ప్రసిద్ధ గ్రంథాన్ని ఎవరు రాశారు?", options: ["కాళిదాస", "భాసా", "సుద్రక", "భవభూషణ"], answer: 0, info: "కాళిదాస రాసిన అభిజ్ఞానశకుంతలమ్ నాటకం." },
+            { question: "విక్రమోర్వస్యమ్ అనే ప్రసిద్ధ నాటకం ఎవరూ రచించారు?", options: ["కాళిదాస", "సుద్రక", "భాసా", "భవభూషణ"], answer: 0, info: "కాళిదాస రాసిన విక్రమోర్వస్యమ్ నాటకం." },
+            { question: "భగవద్గీత అనే గ్రంథం ఎవరు రచించారు?", options: ["వేదవ్యాస", "వాల్మీకి", "కాళిదాస", "భాసా"], answer: 0, info: "వేదవ్యాస రాసిన భగవద్గీత పురాణ గ్రంథం." },
+            { question: "భారతీయ నాటకశాస్త్రం మరియు కవిత్వం కు సంబంధించి ఏ పురాతన గ్రంథం?", options: ["కావ్య ప్రకాశ", "నాట్యశాస్త్రం", "రసలీల", "శిల్ప శాస్త్రం"], answer: 1, info: "భారతీయ నాట్యశాస్త్రం అనేది నాటకశాస్త్రానికి సంబంధించిన గ్రంథం." },
+            { question: "ఆశ్రమవాసి అనే పుస్తకాన్ని ఎవరు రచించారు?", options: ["రాజశేఖర", "కాళిదాస", "భాసా", "సుధామా"], answer: 0, info: "రాజశేఖర రాసిన ఆశ్రమవాసి అనేది కవిత్వం." },
+            { question: "శతకఘట్ట అనే రచన ఎవరూ రచించారు?", options: ["రాజశేఖర", "భాసా", "కాళిదాస", "శంకరాచార్య"], answer: 0, info: "రాజశేఖర రాసిన శతకఘట్ట రచన." },
+            { question: "గీతాగోవింద అనే రచనని ఎవరు రాశారు?", options: ["కాళిదాస", "జయదేవ", "భాసా", "భవభూషణ"], answer: 1, info: "జయదేవ రాసిన గీతాగోవింద కవిత్వం." },
+            { question: "పురాణమాలా రచయిత ఎవరు?", options: ["కాళిదాస", "భాసా", "శంకరాచార్య", "ఆచార్య"], answer: 2, info: "శంకరాచార్య రచించిన పురాణమాలా గ్రంథం." },
+            { question: "అభినవగుప్తకు సంబంధించిన ప్రధాన రచన ఏది?", options: ["అభినవభారతీ", "సాహిత్యదర్పణం", "నాట్యశాస్త్రం", "శకుంతల"], answer: 0, info: "అభినవభారతీ అభినవగుప్త రచించిన కవిత్వం యొక్క విశ్లేషణ." },
+            { question: "భాగవతం రచయిత ఎవరు?", options: ["వేదవ్యాస", "వాళ్మీకి", "సుకృతీ", "భర్తుహరి"], answer: 0, info: "వేదవ్యాస రచించిన భాగవతం పురాణం." },
+            { question: "మా పుస్తకం 'భారతీయ కథలు' రచయిత ఎవరు?", options: ["విష్ణు శర్మ", "కాళిదాస", "భాసా", "సుద్రక"], answer: 0, info: "విష్ణు శర్మ రచించిన 'భారతీయ కథలు' కధా సంకలనం." },
+            { question: "రామాయణ రచయిత ఎవరు?", options: ["వాల్మీకి", "కాళిదాస", "భాసా", "భవభూషణ"], answer: 0, info: "వాల్మీకి రచించిన రామాయణ మహాకావ్యం." },
+            { question: "కావ్య ప్రకాశం రచయిత ఎవరు?", options: ["సంకరాచార్య", "కాళిదాస", "శంకరాచార్య", "వేదవ్యాస"], answer: 0, info: "సంకరాచార్య రచించిన కావ్య ప్రకాశం గ్రంథం." },
+            { question: "నాట్యశాస్త్రం రచయిత ఎవరు?", options: ["భరతముని", "వేదవ్యాస", "కాళిదాస", "భాసా"], answer: 0, info: "భరతముని రచించిన నాట్యశాస్త్రం నాటకశాస్త్రం." },
+            { question: "మధుసూదన శాస్త్రి కు సంబంధించిన రచన ఏది?", options: ["శ్రీ శైల గీత", "శ్రీ కృష్ణ కవిత్వం", "కృష్ణ కవిత్వం", "కృష్ణ కవి"], answer: 0, info: "మధుసూదన శాస్త్రి రచించిన శ్రీ శైల గీత కవిత్వం." },
+            { question: "భర్తుహరి కు సంబంధించిన రచన ఏది?", options: ["సుశ్రుతసంహితా", "కావ్య ప్రకాశ", "నీతిశాతకం", "భవభూషణ"], answer: 2, info: "భర్తుహరి రచించిన నీతిశాతకం నైతికతపై." }
+        ];
+
+        const startScreen = document.getElementById('start-screen');
+        const namaskaram = document.getElementById('namaskaram');
+        const gameInstructions = document.getElementById('game-instructions');
+        const playNowButton = document.getElementById('play-now');
+
+        const gameScreen = document.getElementById('game-screen');
+        const questionContainer = document.getElementById('question-container');
+        const prevButton = document.getElementById('prev');
+        const nextButton = document.getElementById('next');
+        const submitButton = document.getElementById('submit');
+
+        const reviewScreen = document.getElementById('review-screen');
+        const scoreElement = document.getElementById('score');
+        const moreInfoButton = document.getElementById('more-info');
+        const playAgainButton = document.getElementById('play-again');
+        const usefulLinksButton = document.getElementById('useful-links');
+
+        const infoScreen = document.getElementById('info-screen');
+        const infoDetails = document.getElementById('info-details');
+        const backToReviewButton = document.getElementById('back-to-review');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswers = [];
+        let questionOrder = [];
+
+        function startGame() {
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            questionOrder = Array.from({ length: 20 }, (_, i) => i).sort(() => 0.5 - Math.random()).slice(0, 10);
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const questionData = questions[questionOrder[currentQuestionIndex]];
+            questionContainer.innerHTML = `
+                <p>${questionData.question}</p>
+                <ul class="options">
+                    ${questionData.options.map((option, index) => `
+                        <li class="option${selectedAnswers[currentQuestionIndex] === index ? ' selected' : ''}" onclick="selectAnswer(${index}, this)">${option}</li>
+                    `).join('')}
+                </ul>
+            `;
+            prevButton.classList.toggle('hidden', currentQuestionIndex === 0);
+            nextButton.classList.toggle('hidden', currentQuestionIndex === questionOrder.length - 1);
+            submitButton.classList.toggle('hidden', currentQuestionIndex < questionOrder.length - 1);
+        }
+
+        function selectAnswer(index, element) {
+            // Remove 'selected' class from all options
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+
+            // Add 'selected' class to the clicked option
+            element.classList.add('selected');
+
+            // Store the selected answer
+            selectedAnswers[currentQuestionIndex] = index;
+        }
+
+        function handleNext() {
+            if (selectedAnswers[currentQuestionIndex] !== undefined) {
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= questionOrder.length) {
+                    handleSubmit();
+                } else {
+                    displayQuestion();
+                }
+            } else {
+                alert('దయచేసి సమాధానాన్ని ఎంచుకోండి.');
+            }
+        }
+
+        function handlePrev() {
+            currentQuestionIndex--;
+            displayQuestion();
+        }
+
+        function handleSubmit() {
+            score = selectedAnswers.reduce((total, answer, index) => {
+                if (answer === questions[questionOrder[index]].answer) {
+                    return total + 1;
+                }
+                return total;
+            }, 0);
+            showReview();
+        }
+
+        function showReview() {
+            gameScreen.classList.add('hidden');
+            reviewScreen.classList.remove('hidden');
+            scoreElement.innerHTML = `మీ స్కోరు: ${score} / 10`;
+        }
+
+        function showInfo() {
+            reviewScreen.classList.add('hidden');
+            infoScreen.classList.remove('hidden');
+            infoDetails.innerHTML = questionOrder.map(index => `
+                <p><strong>${questions[index].question}</strong>: ${questions[index].info}</p>
+            `).join('<hr>');
+        }
+
+        function playAgain() {
+            reviewScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        }
+
+        function showUsefulLinks() {
+            window.open('https://nptel.ac.in', '_blank');
+            window.open('http://aravindguptatoys.com', '_blank');
+        }
+
+        function backToReview() {
+            infoScreen.classList.add('hidden');
+            reviewScreen.classList.remove('hidden');
+        }
+
+        setTimeout(() => {
+            namaskaram.classList.add('hidden');
+            gameInstructions.classList.remove('hidden');
+        }, 3000);
+
+        playNowButton.addEventListener('click', startGame);
+        nextButton.addEventListener('click', handleNext);
+        prevButton.addEventListener('click', handlePrev);
+        submitButton.addEventListener('click', handleSubmit);
+        moreInfoButton.addEventListener('click', showInfo);
+        playAgainButton.addEventListener('click', playAgain);
+        usefulLinksButton.addEventListener('click', showUsefulLinks);
+        backToReviewButton.addEventListener('click', backToReview);
+    </script>
+</body>
+</html>
